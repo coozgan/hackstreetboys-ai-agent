@@ -8,25 +8,7 @@ A 13-agent personal life management system built with Google ADK (Agent Developm
 
 ![Architecture Diagram](docs/architecture.png)
 
-Three independently deployed GCP services:
-
-```
-[Vertex AI Agent Engine]          [Cloud Run: shop-agent]
-  Root Orchestrator                 Shop Orchestrator (A2A)
-  ├── health_agent                  ├── catalog_agent
-  ├── finance_agent      A2A        ├── cart_agent
-  ├── career_agent   ──────────►   └── checkout_pipeline
-  ├── social_agent                      ├── cart_validation_loop (Loop)
-  ├── shop_agent (RemoteA2aAgent)       ├── parallel_verification (Parallel)
-  ├── daily_briefing (Parallel)         └── order_finalizer
-  ├── goal_review_loop (Loop)
-  └── weekly_plan (Sequential)
-                  │ SSE                        │ SSE
-                  ▼                            ▼
-         [Cloud Run: mcp-server]
-           FastMCP — 45+ tools
-           SQLite (data/hackstreetboys.db)
-```
+Three independently deployed GCP services
 
 ---
 
