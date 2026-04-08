@@ -1,0 +1,25 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Environment variables (never commit real credentials)
+.env
+
+# Claude Code local settings
+.claude/
+
+# Runtime artifacts
+*.pid
+*.log
+deploy_out.txt
+.session.json
+
+# Data
+data/

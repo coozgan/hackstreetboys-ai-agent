@@ -1,0 +1,19 @@
+# Dockerfile.shop — Shop Agent A2A Service
+FROM python:3.11-slim
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PORT=8080
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends gcc && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy agent code (no mcp_server needed — it connects remotely)
+# Environment variables are injected via --set-env-vars at deploy time (never copy .env)
+COPY shop_agent/ ./shop_agent/
+COPY run_shop_a2a.py .
+
+EXPOSE 8080
+
+# Run the Shop A2A server
+CMD ["sh", "-c", "uvicorn run_shop_a2a:a2a_app --host 0.0.0.0 --port ${PORT}"]

@@ -1,0 +1,7 @@
+google-adk[a2a,vertexai]
+mcp
+aiosqlite
+python-dotenv
+uvicorn
+fastapi
+google-cloud-aiplatform
