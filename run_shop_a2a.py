@@ -27,9 +27,14 @@ except ImportError:
 is_cloud_run = "K_SERVICE" in os.environ
 
 if is_cloud_run:
-    # Cloud Run acts as a reverse proxy, so we expose the public URL properties
-    # Set SHOP_AGENT_HOST to your Cloud Run service URL (without https://)
-    host = os.environ.get("SHOP_AGENT_HOST", os.environ.get("K_SERVICE", "localhost") + ".run.app")
+    # SHOP_AGENT_HOST must be set to the full Cloud Run hostname (without https://)
+    # e.g. shop-agent-abc123-uc.a.run.app
+    # deploy_shop.sh sets this automatically after deployment.
+    host = os.environ.get("SHOP_AGENT_HOST")
+    if not host:
+        raise RuntimeError(
+            "SHOP_AGENT_HOST is not set. Re-run deploy_shop.sh — it sets this automatically."
+        )
     port = 443
     protocol = "https"
     # Uvicorn itself still binds to the internal PORT for receiving traffic

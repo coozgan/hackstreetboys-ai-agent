@@ -21,7 +21,26 @@ gcloud run deploy shop-agent \
   --allow-unauthenticated \
   --set-env-vars "GOOGLE_GENAI_USE_VERTEXAI=true,GOOGLE_CLOUD_PROJECT=$PROJECT,GOOGLE_CLOUD_LOCATION=$REGION,MCP_SERVER_URL=$MCP_URL"
 
-res=$?
+# Capture the real Cloud Run hostname and inject it back as SHOP_AGENT_HOST
+# K_SERVICE only contains the service name (e.g. "shop-agent"), not the full hostname.
+# The real hostname (e.g. shop-agent-abc123-uc.a.run.app) is only known after deployment.
+SHOP_URL=$(gcloud run services describe shop-agent \
+  --region "$REGION" \
+  --project "$PROJECT" \
+  --format 'value(status.url)')
+SHOP_HOST="${SHOP_URL#https://}"
+
+echo "Shop Agent deployed at: $SHOP_URL"
+echo "Setting SHOP_AGENT_HOST=$SHOP_HOST"
+
+gcloud run services update shop-agent \
+  --region "$REGION" \
+  --project "$PROJECT" \
+  --update-env-vars "SHOP_AGENT_HOST=$SHOP_HOST"
+
 mv Dockerfile Dockerfile.shop
 mv Dockerfile.root.bak Dockerfile
-exit $res
+
+echo ""
+echo "Next: add this to your .env before deploying the Agent Engine:"
+echo "  SHOP_AGENT_URL=$SHOP_URL"
